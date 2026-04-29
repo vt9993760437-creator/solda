@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOLDA — Premium Reusable Home & Baby Essentials</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;overflow-x:hidden}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#B8A898;border-radius:4px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+    .au{animation:fadeUp .9s cubic-bezier(.22,1,.36,1) forwards}
+    .af{animation:fadeIn .8s ease forwards}
+    .ih{opacity:0}
+    .d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}
+    .d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+    .d8{animation-delay:.8s}.d10{animation-delay:1s}
+
+    .mq-wrap{overflow:hidden;white-space:nowrap}
+    .mq-inner{display:inline-flex;animation:marquee 30s linear infinite}
+    .mq-inner:hover{animation-play-state:paused}
+
+    .grain::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");opacity:.45}
+
+    .img-zoom{overflow:hidden}
+    .img-zoom img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.22,1,.36,1)}
+    .img-zoom:hover img{transform:scale(1.07)}
+
+    .pcard{transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s ease;cursor:default}
+    .pcard:hover{transform:translateY(-8px)}
+
+    .btn-main{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;border-radius:999px;
+      font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:.22em;
+      text-transform:uppercase;cursor:pointer;border:none;text-decoration:none;transition:all .3s}
+    .btn-main:hover{opacity:.88;gap:16px}
+    .btn-main:active{transform:scale(.97)}
+    .btn-outline{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;border-radius:999px;
+      font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:.22em;
+      text-transform:uppercase;cursor:pointer;background:transparent;text-decoration:none;transition:all .3s}
+    .btn-outline:hover{gap:16px}
+    .add-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;
+      font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:.15em;
+      text-transform:uppercase;cursor:pointer;border:none;transition:all .3s}
+    .add-btn:active{transform:scale(.95)}
+
+    .nav-link{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.22em;
+      text-transform:uppercase;font-weight:400;text-decoration:none;transition:opacity .2s}
+    .nav-link:hover{opacity:1!important}
+
+    .lang-pill{display:flex;border-radius:999px;overflow:hidden;border:1px solid}
+    .lang-opt{padding:5px 13px;font-size:10px;font-weight:500;letter-spacing:.08em;
+      cursor:pointer;border:none;transition:all .2s;font-family:'Jost',sans-serif}
+    .icon-btn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;border:1px solid;cursor:pointer;background:none;transition:all .2s}
+    .icon-btn:hover{transform:scale(1.07)}
+
+    .cat-tab{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.18em;
+      text-transform:uppercase;font-weight:500;padding:8px 20px;border-radius:999px;
+      cursor:pointer;border:1px solid;transition:all .25s;white-space:nowrap}
+
+    .cart-drawer{position:fixed;top:0;right:0;height:100%;z-index:50;
+      width:min(440px,100vw);display:flex;flex-direction:column;
+      transition:transform .55s cubic-bezier(.22,1,.36,1)}
+    .cart-drawer.closed{transform:translateX(100%)}
+    .cart-drawer.open{transform:translateX(0)}
+    .cart-bd{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);transition:opacity .3s}
+    .cart-bd.off{opacity:0;pointer-events:none}
+    .cart-bd.on{opacity:1;pointer-events:auto}
+    .qty-btn{background:none;border:none;cursor:pointer;display:flex;
+      align-items:center;justify-content:center;opacity:.6;transition:opacity .2s}
+    .qty-btn:hover{opacity:1}
+
+    .swatch{width:18px;height:18px;border-radius:50%;cursor:pointer;
+      border:2px solid transparent;transition:all .2s;flex-shrink:0}
+    .swatch.active{border-color:#888;transform:scale(1.2)}
+    .size-btn{font-family:'Jost',sans-serif;font-size:10px;padding:3px 9px;
+      border-radius:6px;border:1px solid;cursor:pointer;transition:all .2s}
+
+    .tcard{transition:transform .4s ease,box-shadow .4s ease}
+    .tcard:hover{transform:translateY(-4px)}
+
+    .wish-btn{position:absolute;top:12px;right:12px;z-index:5;width:34px;height:34px;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px)}
+    .wish-btn:hover{transform:scale(1.12)}
+
+    .float-card{animation:float 4s ease-in-out infinite}
+
+    .cat-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
+      border-radius:999px;font-family:'Jost',sans-serif;font-size:9px;
+      font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+
+    input[type="email"]{outline:none;font-family:'DM Sans',sans-serif}
+    input[type="email"]:focus{box-shadow:0 0 0 2px rgba(184,149,106,.35)}
+
+    @media(max-width:900px){
+      .hide-mob{display:none!important}
+      .hero-title{font-size:52px!important}
+      .editorial-grid{grid-template-columns:1fr!important}
+      .footer-grid{grid-template-columns:1fr 1fr!important}
+      .trust-grid{grid-template-columns:1fr 1fr!important}
+      .stats-grid{grid-template-columns:1fr 1fr!important}
+    }
+    @media(max-width:520px){
+      .hero-title{font-size:38px!important}
+      .prod-grid{grid-template-columns:1fr!important}
+    }
+  </style>
+</head>
+<body>
+<div id="root" class="grain"></div>
+
+<script type="text/babel">
+const {useState,useEffect,useCallback} = React;
+
+/* ═══════════════════════════════════════════════
+   TRANSLATIONS
+═══════════════════════════════════════════════ */
+const T = {
+  EN:{
+    announce:"Free delivery over €80  ·  Reusable. Sustainable. Nordic.  ·  60-Night Trial  ·  OEKO-TEX Certified",
+    navShop:"Shop",navAbout:"Our Story",navContact:"Contact",
+    heroEyebrow:"Sustainable Home & Baby · Finland",
+    heroTitle:"Reusable.\nEco-Smart.\nPremium.",
+    heroSub:"Premium reusable bedding, robotic mop cloths, and eco-certified baby essentials — crafted for the Nordic home.",
+    heroBtn:"Shop All",heroBtn2:"Our Mission",heroScroll:"Discover",
+    catAll:"All Products",catBed:"Bedding",catMop:"Mop Cloths",catBaby:"Baby",
+    secLabel:"Our Products",secTitle:"Built to\nLast & Reuse",
+    secSub:"Every product designed for repeated use, machine washability, and certified safety.",
+    addToCart:"Add to Cart",added:"Added ✓",inStock:"In stock",
+    cartTitle:"Your Cart",cartEmpty:"Your cart is empty.",cartTotal:"Total",cartCheckout:"Checkout",
+    trustTitle:"The SOLDA Promise",
+    t1t:"OEKO-TEX Certified",t1d:"Every fabric certified free of harmful substances — safe for babies & adults.",
+    t2t:"Free Finnish Delivery",t2d:"Complimentary shipping on all orders over €80.",
+    t3t:"Machine Washable",t3d:"All products are designed for 60°C washes, hundreds of cycles.",
+    t4t:"Carbon Neutral",t4d:"All shipments offset. 100% compostable packaging.",
+    statsLabel:"By the Numbers",
+    s1n:"500+",s1l:"Washes Per Product",s2n:"14K+",s2l:"Happy Families",
+    s3n:"0",s3l:"Single-Use Items",s4n:"4.9",s4l:"Average Rating",
+    editLabel:"Our Philosophy",
+    editTitle:"Made to Be\nUsed Again & Again",
+    editBody:"Every SOLDA product replaces dozens of disposables. Our fabrics are tested to survive 500+ machine washes without losing integrity — because sustainability isn't a trend, it's how we build everything.",
+    editLink:"Read Our Story",
+    reviewsLabel:"Customer Reviews",reviewsTitle:"Loved Across Finland",
+    newsletter_label:"Join the Circle",newsletter_title:"Eco Living Stories",
+    newsletter_sub:"New products, care guides & 10% off your first order.",
+    newsletter_ph:"your@email.com",newsletter_btn:"Subscribe",
+    footerTag:"Reuse beautifully.",
+    f1:"Shop",f2:"Help",f3:"Company",
+    fl1:["Bedding","Mop Cloths","Baby Diapers","Baby Panties","Bundle & Save"],
+    fl2:["Shipping","Returns","FAQ","Contact Us"],
+    fl3:["Our Story","Sustainability","Press","Affiliates"],
+    footerCopy:"© 2026 SOLDA Nordic Home. All rights reserved.",
+    footerCredit:"Designed & maintained by",
+    colorLabel:"Colour",sizeLabel:"Size",cur:"€",
+    packLabel:"Pack",
+  },
+  FI:{
+    announce:"Ilmainen toimitus yli 80€  ·  Uudelleenkäytettävä. Kestävä. Pohjoismainen.  ·  60 Yön Koeaika  ·  OEKO-TEX Sertifioitu",
+    navShop:"Kauppa",navAbout:"Tarinamme",navContact:"Yhteystiedot",
+    heroEyebrow:"Kestävä Koti & Vauva · Suomi",
+    heroTitle:"Uudelleen-\nkäytettävä.\nEko-älykäs.",
+    heroSub:"Premium uudelleenkäytettävät lakanat, robottimoppikankaat ja eko-sertifioidut vauvan tarvikkeet pohjoismaiseen kotiin.",
+    heroBtn:"Kaikkia Tuotteita",heroBtn2:"Missiomme",heroScroll:"Tutki",
+    catAll:"Kaikki Tuotteet",catBed:"Vuodevaatteet",catMop:"Moppikankaat",catBaby:"Vauva",
+    secLabel:"Tuotteet",secTitle:"Rakennettu\nKestämään",
+    secSub:"Jokainen tuote suunniteltu toistuvaan käyttöön, konepesuun ja sertifioituun turvallisuuteen.",
+    addToCart:"Lisää koriin",added:"Lisätty ✓",inStock:"Varastossa",
+    cartTitle:"Ostoskori",cartEmpty:"Ostoskorisi on tyhjä.",cartTotal:"Yhteensä",cartCheckout:"Kassalle",
+    trustTitle:"SOLDA Lupaus",
+    t1t:"OEKO-TEX Sertifioitu",t1d:"Jokainen kangas sertifioitu haitattomaksi — turvallinen vauvoille ja aikuisille.",
+    t2t:"Ilmainen Toimitus",t2d:"Ilmainen toimitus yli 80€ tilauksille koko Suomeen.",
+    t3t:"Konepestävä",t3d:"Kaikki tuotteet kestävät 60°C pesun satoja kertoja.",
+    t4t:"Hiilineutraali",t4d:"Kaikki lähetykset kompensoitu. Kompostoituva pakkaus.",
+    statsLabel:"Luvuilla",
+    s1n:"500+",s1l:"Pesukertaa Per Tuote",s2n:"14K+",s2l:"Tyytyväistä Perhettä",
+    s3n:"0",s3l:"Kertakäyttötuotetta",s4n:"4.9",s4l:"Keskiarvosana",
+    editLabel:"Filosofiamme",
+    editTitle:"Tehty Käytettäväksi\nUudelleen ja Uudelleen",
+    editBody:"Jokainen SOLDA-tuote korvaa kymmeniä kertakäyttöisiä. Kankaamme on testattu kestämään 500+ konepesua menettämättä rakennettaan — koska kestävyys ei ole trendi, se on tapa rakentaa kaikki.",
+    editLink:"Lue Tarinamme",
+    reviewsLabel:"Asiakkaiden Arvostelut",reviewsTitle:"Rakastettu Ympäri Suomea",
+    newsletter_label:"Liity Piiriimme",newsletter_title:"Eko-elämäntarinoita",
+    newsletter_sub:"Uudet tuotteet, hoito-oppaat ja 10% alennus ensimmäisestä tilauksestasi.",
+    newsletter_ph:"sinun@sahkoposti.fi",newsletter_btn:"Tilaa",
+    footerTag:"Käytä kauniisti uudelleen.",
+    f1:"Kauppa",f2:"Apua",f3:"Yritys",
+    fl1:["Vuodevaatteet","Moppikankaat","Vaipat","Vauvan Alushousut","Säästöpaketit"],
+    fl2:["Toimitus","Palautukset","UKK","Ota Yhteyttä"],
+    fl3:["Tarinamme","Kestävyys","Lehdistö","Kumppanit"],
+    footerCopy:"© 2026 SOLDA Nordic Home. Kaikki oikeudet pidätetään.",
+    footerCredit:"Suunnitellut ja ylläpitää",
+    colorLabel:"Väri",sizeLabel:"Koko",cur:"€",
+    packLabel:"Pakkaus",
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   PRODUCT DATA  (10 products, 4 categories)
+═══════════════════════════════════════════════ */
+const PRODUCTS = [
+  /* ── BEDDING ── */
+  {
+    id:1,cat:"bed",badge:"best",price:149,origPrice:189,rating:4.9,reviews:312,
+    nameEN:"Nordic Linen Duvet Cover",nameFI:"Pohjoismainen Pellava Pussilakana",
+    descEN:"Stone-washed French linen. Softer with every wash. 200+ wash guarantee.",
+    descFI:"Kivipesty ranskalainen pellava. Pehmenee jokaisella pesulla.",
+    img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=85&auto=format&fit=crop",
+    colors:["#D4C5A9","#9B8E7E","#6B7C6E","#C9B5A0"],colorNames:["Linen","Stone","Sage","Blush"],
+    sizes:["150×200","200×200","200×220","240×220"],tagEN:"Bedding",tagFI:"Vuodevaatteet",
+  },
+  {
+    id:2,cat:"bed",badge:"new",price:89,origPrice:null,rating:4.8,reviews:187,
+    nameEN:"Crisp Percale Fitted Sheet",nameFI:"Raikas Perkaali Trikoofrotee",
+    descEN:"200TC Egyptian long-staple cotton. Hotel-crisp. 300-wash certified.",
+    descFI:"200TC pitkäkuituinen egyptiläinen puuvilla. Hotellituntuma.",
+    img:"https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=700&q=85&auto=format&fit=crop",
+    colors:["#EDE8DF","#C8D5C8","#B8C5D0","#D4B8B8"],colorNames:["Ivory","Mint","Sky","Rose"],
+    sizes:["90×200","140×200","160×200","180×200"],tagEN:"Bedding",tagFI:"Vuodevaatteet",
+  },
+  {
+    id:3,cat:"bed",badge:"sale",price:59,origPrice:75,rating:4.7,reviews:94,
+    nameEN:"Waffle Weave Pillow Set",nameFI:"Vahveli Tyynyliinasetti",
+    descEN:"Textured waffle cotton. Spa softness, machine washable at 60°C.",
+    descFI:"Kuvioitu vaahtomainen puuvilla. Kylpylämäinen pehmeeys.",
+    img:"https://images.unsplash.com/photo-1567016432779-094069958ea5?w=700&q=85&auto=format&fit=crop",
+    colors:["#E8E0D0","#C5BFB5","#8A9E8A"],colorNames:["Sand","Driftwood","Moss"],
+    sizes:["50×60","50×70","65×65"],tagEN:"Bedding",tagFI:"Vuodevaatteet",
+  },
+  {
+    id:4,cat:"bed",badge:"bundle",price:229,origPrice:289,rating:5.0,reviews:428,
+    nameEN:"Sateen Complete Bundle",nameFI:"Satiini Täydellinen Setti",
+    descEN:"Full set: duvet + 2 pillowcases. Silky 400TC. 500+ wash guarantee.",
+    descFI:"Täydellinen setti: pussilakana + 2 tyynyliinaa. 400TC satiini.",
+    img:"https://images.unsplash.com/photo-1540518614846-7eded433c457?w=700&q=85&auto=format&fit=crop",
+    colors:["#F0EBE3","#D6D0C8","#B5A898"],colorNames:["Pearl","Fog","Taupe"],
+    sizes:["Single","Double","Queen","King"],tagEN:"Bedding",tagFI:"Vuodevaatteet",
+  },
+  /* ── ROBOTIC MOP CLOTHS ── */
+  {
+    id:5,cat:"mop",badge:"new",price:34,origPrice:44,rating:4.8,reviews:203,
+    nameEN:"Universal Robot Mop Pad Set",nameFI:"Universaali Robottimoppiset",
+    descEN:"6-pack. Fits iRobot Braava, Ecovacs, Roborock & most robot mops. Microfibre.",
+    descFI:"6-pakkaus. Sopii iRobot Braava, Ecovacs, Roborock & useimpiin robottimoppeihin.",
+    img:"https://images.unsplash.com/photo-1563453392212-326f5e854473?w=700&q=85&auto=format&fit=crop",
+    colors:["#DCDCDC","#C8D4D8","#D8D0C8"],colorNames:["White","Arctic","Cream"],
+    sizes:["Standard (6-pack)","Large (6-pack)","Value (12-pack)"],tagEN:"Mop Cloths",tagFI:"Moppikankaat",
+  },
+  {
+    id:6,cat:"mop",badge:null,price:26,origPrice:null,rating:4.7,reviews:156,
+    nameEN:"Heavy-Duty Wet Mop Cloths",nameFI:"Tehopyyhe Märkämoppipakkaus",
+    descEN:"4-pack heavy microfibre. Deep-scrub texture. 400 machine washes tested.",
+    descFI:"4-pakkaus tehokas mikrokuitu. Syvä puhdistustekstuuri. Testattu 400 pesuun.",
+    img:"https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=700&q=85&auto=format&fit=crop",
+    colors:["#E0E0E0","#B8C8B8","#C8B8B8"],colorNames:["Neutral","Sage","Blush"],
+    sizes:["4-pack","8-pack","12-pack"],tagEN:"Mop Cloths",tagFI:"Moppikankaat",
+  },
+  /* ── BABY PANTIES ── */
+  {
+    id:7,cat:"baby",badge:"best",price:42,origPrice:52,rating:4.9,reviews:381,
+    nameEN:"Organic Cotton Training Pants",nameFI:"Luomupuuvilla Harjoitushousut",
+    descEN:"5-pack. OEKO-TEX 100 certified organic cotton. Toddler potty training essential.",
+    descFI:"5-pakkaus. OEKO-TEX 100 luomupuuvilla. Potta-harjoittelun tärkeä apuväline.",
+    img:"https://images.unsplash.com/photo-1522771930-78848d9293e8?w=700&q=85&auto=format&fit=crop",
+    colors:["#F5E6D8","#D8E8D8","#D8E0F0","#F0D8E8"],colorNames:["Peach","Mint","Sky","Lavender"],
+    sizes:["6–12m","12–18m","18–24m","2–3y","3–4y"],tagEN:"Baby",tagFI:"Vauva",
+  },
+  {
+    id:8,cat:"baby",badge:"new",price:28,origPrice:null,rating:4.8,reviews:142,
+    nameEN:"Bamboo Blend Toddler Briefs",nameFI:"Bambu-Alushousut Taaperolle",
+    descEN:"3-pack. Bamboo–cotton blend. Ultra-soft, antibacterial, breathable.",
+    descFI:"3-pakkaus. Bambu-puuvillasekoite. Erittäin pehmeä, antibakteerinen.",
+    img:"https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=700&q=85&auto=format&fit=crop",
+    colors:["#FAF0E0","#E0F0E8","#E8E0F5"],colorNames:["Vanilla","Sage","Lilac"],
+    sizes:["6–12m","12–18m","18–24m","2–3y"],tagEN:"Baby",tagFI:"Vauva",
+  },
+  /* ── BABY DIAPERS ── */
+  {
+    id:9,cat:"baby",badge:"best",price:79,origPrice:99,rating:5.0,reviews:512,
+    nameEN:"All-in-One Cloth Diaper Set",nameFI:"All-in-One Kangasvaippasetti",
+    descEN:"5-pack. Snap closure, waterproof shell, organic cotton insert. Birth–3y.",
+    descFI:"5-pakkaus. Nepparisulku, vedenpitävä kuori, luomupuuvillainen sisus.",
+    img:"https://images.unsplash.com/photo-1695066121571-da11b5d548cc?w=700&q=85&auto=format&fit=crop",
+    colors:["#F0E8D8","#D8EAD8","#D8E4F0","#F0D8E8","#E8E8D8"],
+    colorNames:["Oat","Forest","Denim","Rose","Birch"],
+    sizes:["Newborn (2–5kg)","Small (4–8kg)","Medium (7–12kg)","Large (9–16kg)"],tagEN:"Baby",tagFI:"Vauva",
+  },
+  {
+    id:10,cat:"baby",badge:"bundle",price:118,origPrice:149,rating:4.9,reviews:267,
+    nameEN:"Bamboo Pocket Diaper Bundle",nameFI:"Bambu Taskuvaippa-Paketti",
+    descEN:"6-pack pocket diapers + 12 inserts. Bamboo-microfibre. Birth to potty.",
+    descFI:"6 taskuvaippaa + 12 sisusta. Bambu-mikrokuitu. Vauvaiästä pottaan.",
+    img:"https://images.unsplash.com/photo-1695998575483-b215c8b2f619?w=700&q=85&auto=format&fit=crop",
+    colors:["#F5EEE0","#E8F0E8","#EEE8F5","#F5E8E8"],
+    colorNames:["Natural","Leaf","Mist","Petal"],
+    sizes:["Starter (3kg+)","Standard (5kg+)","Plus (8kg+)"],tagEN:"Baby",tagFI:"Vauva",
+  },
+];
+
+const REVIEWS = [
+  {name:"Aino Mäkinen",loc:"Helsinki",cat:"Bedding",text:"The linen duvet cover has been washed over 80 times already and still feels incredible. SOLDA's quality is genuinely outstanding — exactly what a Nordic home deserves.",rating:5,img:"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop&facepad=2"},
+  {name:"Mikael Virtanen",loc:"Tampere",cat:"Baby Diapers",text:"Switched to SOLDA cloth diapers 6 months ago. We've saved so much money and waste. The bamboo pocket set is soft, easy to use and our baby loves them.",rating:5,img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop&facepad=2"},
+  {name:"Sofia Korhonen",loc:"Turku",cat:"Mop Cloths",text:"The robot mop pads fit my Roborock perfectly. Replaced 3 months of disposables in one €34 purchase. Reusable products this good shouldn't be this affordable.",rating:5,img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80&auto=format&fit=crop&facepad=2"},
+];
+
+/* ═══════════════════════════════════════════════
+   FALLBACK SVG PER CATEGORY
+═══════════════════════════════════════════════ */
+function FallbackImg({product,dark}){
+  const D = dark;
+  const cat = product.cat;
+
+  const palettes = {
+    bed:    D?["#3D3530","#5A4E44","#9B8A78","#C0AA8A"]:["#F5EEE4","#E8DDD0","#D4C5A9","#C0AA8A"],
+    mop:    D?["#2C3038","#3C4248","#6080A0","#80A0C0"]:["#E8EEF2","#D0DDE8","#A8BDD0","#80A0BC"],
+    baby:   D?["#3A2C38","#5A4458","#A878A8","#C8A0C8"]:["#F5E8F0","#EDD8EA","#DDB8D8","#CC98C8"],
+  };
+  const p = palettes[cat]||palettes.bed;
+
+  const scenes = {
+    bed:(
+      <g>
+        {[...Array(8)].map((_,i)=>[...Array(6)].map((__,j)=>(
+          <rect key={`${i}${j}`} x={i*32+(j%2)*6} y={j*42} width="25" height="3" rx="1.5"
+            fill={p[(i+j)%4]} opacity={0.45+((i*j+1)%3)*0.15}/>
+        )))}
+        <rect x="30" y="60" width="220" height="135" rx="8" fill={p[0]} opacity=".8"/>
+        <rect x="35" y="65" width="210" height="125" rx="6" fill={p[1]} opacity=".5"/>
+        {[...Array(7)].map((_,i)=>(
+          <line key={i} x1="35" y1={76+i*16} x2="245" y2={76+i*16} stroke={p[2]} strokeWidth=".8" opacity=".3"/>
+        ))}
+      </g>
+    ),
+    mop:(
+      <g>
+        <rect x="60" y="40" width="160" height="20" rx="10" fill={p[2]} opacity=".9"/>
+        <rect x="128" y="60" width="24" height="120" rx="8" fill={p[1]} opacity=".8"/>
+        <rect x="50" y="175" width="180" height="55" rx="12" fill={p[0]} opacity=".85"/>
+        <rect x="55" y="180" width="170" height="45" rx="9" fill={p[1]} opacity=".55"/>
+        {[...Array(10)].map((_,i)=>(
+          <rect key={i} x={58+i*17} y="185" width="10" height="35" rx="5" fill={p[2]} opacity=".3"/>
+        ))}
+        {[...Array(6)].map((_,i)=>(
+          <line key={i} x1="55" y1={186+i*7} x2="225" y2={186+i*7} stroke={p[3]} strokeWidth=".6" opacity=".25"/>
+        ))}
+      </g>
+    ),
+    baby:(
+      <g>
+        <ellipse cx="140" cy="110" rx="80" ry="60" fill={p[0]} opacity=".85"/>
+        <ellipse cx="90" cy="160" rx="38" ry="45" fill={p[0]} opacity=".8"/>
+        <ellipse cx="190" cy="160" rx="38" ry="45" fill={p[0]} opacity=".8"/>
+        <ellipse cx="140" cy="112" rx="72" ry="52" fill={p[1]} opacity=".5"/>
+        {[...Array(4)].map((_,i)=>(
+          <circle key={i} cx={108+i*21} cy="105" r="3" fill={p[2]} opacity=".45"/>
+        ))}
+        <ellipse cx="140" cy="90" rx="30" ry="8" fill={p[2]} opacity=".3"/>
+      </g>
+    ),
+  };
+
+  return(
+    <svg viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg"
+      style={{width:"100%",height:"100%",display:"block"}}>
+      <rect width="280" height="260" fill={p[0]}/>
+      {[...Array(25)].map((_,i)=>(
+        <line key={i} x1="0" y1={i*11} x2="280" y2={i*11+5} stroke={p[2]} strokeWidth=".4" opacity=".16"/>
+      ))}
+      {scenes[cat]||scenes.bed}
+    </svg>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ICONS
+═══════════════════════════════════════════════ */
+const I={
+  Cart: ({s=20})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>,
+  X:    ({s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+  Moon: ({s=16})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>,
+  Sun:  ({s=16})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+  Arr:  ({s=14})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+  Heart:({s=15,f=false})=><svg width={s} height={s} viewBox="0 0 24 24" fill={f?"currentColor":"none"} stroke="currentColor" strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>,
+  Leaf: ({s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M17 8C8 10 5.9 16.17 3.82 19.34c-.6.94.21 2.08 1.3 1.73C7.77 19.93 18 17 18 9"/><path d="M3 21l4-4"/></svg>,
+  Shield:({s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  Truck: ({s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
+  Recycle:({s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><polyline points="1.5 8.5 1.5 3.5 6.5 3.5"/><path d="M1.5 3.5L7 9"/><polyline points="22.5 15.5 22.5 20.5 17.5 20.5"/><path d="M22.5 20.5L17 15"/><polyline points="6.5 20.5 1.5 20.5 1.5 15.5"/><path d="M1.5 20.5L7 15"/><polyline points="17.5 3.5 22.5 3.5 22.5 8.5"/><path d="M22.5 3.5L17 9"/></svg>,
+  Check:({s=13})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>,
+  Minus:({s=13})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  Plus: ({s=13})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+};
+
+function Stars({n,size=12}){
+  return(
+    <span style={{display:"inline-flex",gap:"2px"}}>
+      {[1,2,3,4,5].map(i=>(
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24"
+          fill={i<=Math.floor(n)?"#C8A87A":"none"} stroke="#C8A87A" strokeWidth="1.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   CART DRAWER
+═══════════════════════════════════════════════ */
+function CartDrawer({open,onClose,cart,setCart,t,dark}){
+  const D=dark;
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const bg=D?"#0F0D0B":"#FAF8F3",col=D?"#F0EBE0":"#1E1A16";
+  const mut=D?"#7A7268":"#9A9088",bdr=D?"#2A2826":"#EBE4D8";
+  const rowbg=D?"#1A1816":"#F5F0E8";
+  const acBg=D?"#C8A87A":"#1E1A16",acTx=D?"#0F0D0B":"#FAF8F3";
+  const upd=(cid,d)=>setCart(p=>p.map(i=>i.cartId===cid?{...i,qty:Math.max(0,i.qty+d)}:i).filter(i=>i.qty>0));
+  return(
+    <>
+      <div className={`cart-bd ${open?"on":"off"}`} onClick={onClose}/>
+      <div className={`cart-drawer ${open?"open":"closed"}`} style={{background:bg,color:col}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+          padding:"22px 28px",borderBottom:`1px solid ${bdr}`}}>
+          <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"21px",
+              letterSpacing:".05em"}}>{t.cartTitle}</span>
+            {cart.length>0&&(
+              <span style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",
+                background:acBg,color:acTx,padding:"2px 8px",borderRadius:"999px",
+                fontWeight:500}}>{cart.reduce((s,i)=>s+i.qty,0)}</span>
+            )}
+          </div>
+          <button onClick={onClose} className="icon-btn"
+            style={{borderColor:bdr,color:col,background:"transparent"}}><I.X/></button>
+        </div>
+        <div style={{flex:1,overflowY:"auto",padding:"20px 28px"}}>
+          {cart.length===0?(
+            <p style={{opacity:.4,fontSize:"13px",paddingTop:"20px",fontStyle:"italic"}}>{t.cartEmpty}</p>
+          ):cart.map(item=>(
+            <div key={item.cartId} style={{display:"flex",gap:"14px",
+              paddingBottom:"20px",marginBottom:"20px",borderBottom:`1px solid ${bdr}`}}>
+              <div style={{width:"80px",height:"80px",borderRadius:"12px",overflow:"hidden",
+                flexShrink:0,background:D?"#2A2620":"#F0E8D8"}}>
+                <img src={item.product.img} alt={item.name}
+                  style={{width:"100%",height:"100%",objectFit:"cover"}}
+                  onError={e=>{e.target.style.display="none"}}/>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <p style={{fontSize:"13px",fontWeight:500,marginBottom:"2px",
+                  whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{item.name}</p>
+                <p style={{fontSize:"10px",opacity:.45,marginBottom:"10px",fontFamily:"'Jost',sans-serif",
+                  letterSpacing:".04em"}}>{item.size} · {item.color}</p>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",
+                    background:rowbg,borderRadius:"999px",padding:"4px 10px"}}>
+                    <button className="qty-btn" style={{color:col}} onClick={()=>upd(item.cartId,-1)}><I.Minus/></button>
+                    <span style={{fontSize:"13px",fontWeight:500,minWidth:"14px",textAlign:"center"}}>{item.qty}</span>
+                    <button className="qty-btn" style={{color:col}} onClick={()=>upd(item.cartId,+1)}><I.Plus/></button>
+                  </div>
+                  <span style={{fontSize:"14px",fontWeight:600}}>{t.cur}{(item.price*item.qty).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {cart.length>0&&(
+          <div style={{padding:"20px 28px",borderTop:`1px solid ${bdr}`}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"18px"}}>
+              <span style={{opacity:.55,fontSize:"13px"}}>{t.cartTotal}</span>
+              <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"26px",fontWeight:500}}>
+                {t.cur}{total.toFixed(2)}</span>
+            </div>
+            <button style={{width:"100%",padding:"15px",borderRadius:"999px",border:"none",
+              background:acBg,color:acTx,fontFamily:"'Jost',sans-serif",fontSize:"11px",
+              fontWeight:500,letterSpacing:".22em",textTransform:"uppercase",cursor:"pointer"}}
+              onMouseOver={e=>e.currentTarget.style.opacity=.85}
+              onMouseOut={e=>e.currentTarget.style.opacity=1}>
+              {t.cartCheckout}
+            </button>
+            <p style={{textAlign:"center",fontSize:"10px",marginTop:"10px",opacity:.3,
+              fontFamily:"'Jost',sans-serif",letterSpacing:".06em"}}>
+              Secure · Free Returns · SSL Encrypted
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   PRODUCT CARD
+═══════════════════════════════════════════════ */
+function ProductCard({product,t,lang,dark,onAdd}){
+  const [added,setAdded]=useState(false);
+  const [color,setColor]=useState(0);
+  const [size,setSize]=useState(0);
+  const [wished,setWished]=useState(false);
+  const [imgErr,setImgErr]=useState(false);
+  const D=dark;
+  const name=lang==="EN"?product.nameEN:product.nameFI;
+  const desc=lang==="EN"?product.descEN:product.descFI;
+  const tag=lang==="EN"?product.tagEN:product.tagFI;
+
+  const bLabel=product.badge==="best"?t.badge_best||"Bestseller"
+    :product.badge==="new"?(lang==="EN"?"New":"Uusi")
+    :product.badge==="bundle"?(lang==="EN"?"Bundle":"Setti")
+    :product.badge==="sale"?(lang==="EN"?"Sale":"Ale"):null;
+
+  const bg=D?"#1A1714":"#FFFFFF",col=D?"#F0EBE0":"#1E1A16";
+  const mut=D?"#7A7268":"#9A9088",bdr=D?"#2A2826":"#EBE4D8";
+  const rowbg=D?"#242220":"#F5F0E8";
+  const gold="#C8A87A",deep="#1E1A16";
+  const acBg=D?gold:deep,acTx=D?deep:"#FAF8F3";
+
+  const catColor={
+    bed:   {bg:D?"rgba(200,168,122,.12)":"rgba(200,168,122,.12)",col:D?"#C8A87A":"#8A6A3A"},
+    mop:   {bg:D?"rgba(100,160,200,.12)":"rgba(80,140,190,.1)",col:D?"#78B4D8":"#3A6A8A"},
+    baby:  {bg:D?"rgba(200,140,200,.12)":"rgba(180,100,180,.1)",col:D?"#D898D8":"#8A3A8A"},
+  };
+  const cc=catColor[product.cat]||catColor.bed;
+
+  const handleAdd=()=>{
+    onAdd({cartId:`${product.id}-${Date.now()}`,id:product.id,product,name,
+      price:product.price,color:product.colorNames[color],size:product.sizes[size],qty:1});
+    setAdded(true);setTimeout(()=>setAdded(false),2200);
+  };
+
+  return(
+    <div className="pcard" style={{background:bg,borderRadius:"20px",overflow:"hidden",
+      display:"flex",flexDirection:"column",position:"relative",
+      boxShadow:D?"0 2px 24px rgba(0,0,0,.38)":"0 2px 20px rgba(0,0,0,.07)"}}>
+
+      {/* Category pill */}
+      <div style={{position:"absolute",top:"12px",left:"12px",zIndex:11,
+        display:"flex",gap:"6px",alignItems:"center",flexWrap:"wrap"}}>
+        <span style={{padding:"3px 9px",borderRadius:"999px",fontSize:"9px",fontWeight:500,
+          letterSpacing:".12em",textTransform:"uppercase",fontFamily:"'Jost',sans-serif",
+          background:cc.bg,color:cc.col,backdropFilter:"blur(6px)"}}>{tag}</span>
+        {bLabel&&(
+          <span style={{padding:"3px 9px",borderRadius:"999px",fontSize:"9px",fontWeight:500,
+            letterSpacing:".12em",textTransform:"uppercase",fontFamily:"'Jost',sans-serif",
+            background:product.badge==="sale"?"rgba(200,90,58,.85)":
+              product.badge==="new"?"rgba(74,130,106,.85)":
+              D?"rgba(200,168,122,.9)":"rgba(30,26,22,.88)",
+            color:product.badge==="sale"||product.badge==="new"?"white":acTx,
+            backdropFilter:"blur(6px)"}}>
+            {bLabel}
+          </span>
+        )}
+      </div>
+
+      {/* Wishlist */}
+      <button className="wish-btn" onClick={()=>setWished(w=>!w)}
+        style={{background:D?"rgba(20,18,16,.72)":"rgba(255,255,255,.78)",
+          color:wished?"#D4534A":col}}>
+        <I.Heart s={15} f={wished}/>
+      </button>
+
+      {/* Image */}
+      <div className="img-zoom" style={{aspectRatio:"4/3",background:D?"#2A2620":"#F0EBE0",flexShrink:0}}>
+        {!imgErr?(
+          <img src={product.img} alt={name} onError={()=>setImgErr(true)}
+            style={{width:"100%",height:"100%",objectFit:"cover",display:"block",
+              transition:"transform .8s cubic-bezier(.22,1,.36,1)"}}/>
+        ):(
+          <FallbackImg product={product} dark={dark}/>
+        )}
+      </div>
+
+      {/* Body */}
+      <div style={{padding:"16px 18px 18px",display:"flex",flexDirection:"column",flex:1}}>
+        {/* Rating */}
+        <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"7px"}}>
+          <Stars n={product.rating}/>
+          <span style={{fontSize:"10px",color:mut,fontFamily:"'Jost',sans-serif",
+            letterSpacing:".03em"}}>{product.rating} ({product.reviews.toLocaleString()})</span>
+        </div>
+
+        <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"17px",lineHeight:1.2,
+          marginBottom:"4px",color:col,fontWeight:500}}>{name}</h3>
+        <p style={{fontSize:"11px",lineHeight:1.65,color:mut,marginBottom:"11px"}}>{desc}</p>
+
+        {/* Colours */}
+        <div style={{display:"flex",alignItems:"center",gap:"5px",marginBottom:"9px",flexWrap:"wrap"}}>
+          <span style={{fontSize:"9px",color:mut,marginRight:"2px",letterSpacing:".1em",
+            textTransform:"uppercase",fontFamily:"'Jost',sans-serif"}}>{t.colorLabel}:</span>
+          {product.colors.map((c,i)=>(
+            <div key={i} className={`swatch ${color===i?"active":""}`}
+              onClick={()=>setColor(i)} title={product.colorNames[i]}
+              style={{backgroundColor:c,borderColor:color===i?gold:"transparent"}}/>
+          ))}
+          <span style={{fontSize:"9px",color:mut,marginLeft:"2px",fontFamily:"'Jost',sans-serif"}}>
+            {product.colorNames[color]}
+          </span>
+        </div>
+
+        {/* Sizes */}
+        <div style={{display:"flex",flexWrap:"wrap",gap:"4px",marginBottom:"13px"}}>
+          {product.sizes.map((s,i)=>(
+            <button key={i} className="size-btn" onClick={()=>setSize(i)}
+              style={{background:size===i?acBg:"transparent",
+                borderColor:size===i?acBg:(D?"#3A3530":"#DDD8CE"),
+                color:size===i?acTx:(D?"#7A7268":"#9A9088")}}>
+              {s}
+            </button>
+          ))}
+        </div>
+
+        {/* Price + Add */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:"auto",gap:"8px"}}>
+          <div style={{flexShrink:0}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:"6px"}}>
+              <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",
+                fontWeight:600,color:col}}>{t.cur}{product.price}</span>
+              {product.origPrice&&(
+                <span style={{fontSize:"11px",textDecoration:"line-through",
+                  color:D?"#4A4440":"#C0B8A8"}}>{t.cur}{product.origPrice}</span>
+              )}
+            </div>
+            <p style={{fontSize:"9px",color:D?"#6A9A6A":"#5A8A5A",fontFamily:"'Jost',sans-serif",
+              letterSpacing:".05em"}}>● {t.inStock}</p>
+          </div>
+          <button className="add-btn" onClick={handleAdd}
+            style={{background:added?(D?"rgba(74,106,74,.9)":"rgba(232,245,232,.9)"):acBg,
+              color:added?(D?"#A8D8A8":"#3A7A3A"):acTx,flexShrink:0}}>
+            {added?<><I.Check s={11}/>{t.added}</>:t.addToCart}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   HERO BEDROOM SVG (kept as fallback)
+═══════════════════════════════════════════════ */
+function HeroFallback({dark}){
+  const D=dark;
+  const c={wall:D?"#1E1A14":"#FAF7F2",sheet:D?"#3A3228":"#EDE5D5",fold:D?"#4A4238":"#E0D5C0",
+    pillow:D?"#2E2820":"#F0E8D8",accent:D?"#7A6A5A":"#C8B89A",stand:D?"#28221A":"#E8DEC8"};
+  return(
+    <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"
+      style={{width:"100%",height:"100%",display:"block"}}>
+      <rect width="800" height="600" fill={c.wall}/>
+      {[...Array(35)].map((_,i)=>(
+        <line key={i} x1="0" y1={i*18} x2="800" y2={i*18+7} stroke={c.accent} strokeWidth=".3" opacity=".12"/>
+      ))}
+      <rect x="80" y="155" width="640" height="185" rx="12" fill={D?"#2A2218":"#EAE0CC"} opacity=".92"/>
+      {[155,235,315,395,475,555,635].map((x,i)=>(
+        <rect key={i} x={x} y="162" width="8" height="172" rx="4" fill={c.accent} opacity=".15"/>
+      ))}
+      <rect x="40" y="335" width="720" height="230" fill={D?"#1E1A14":"#EDE4D4"}/>
+      <rect x="56" y="278" width="688" height="205" rx="8" fill={c.sheet}/>
+      <rect x="56" y="278" width="688" height="46" rx="8" fill={c.fold}/>
+      {[...Array(9)].map((_,i)=>(
+        <line key={i} x1="56" y1={328+i*18} x2="744" y2={328+i*18} stroke={c.accent} strokeWidth=".6" opacity=".18"/>
+      ))}
+      <rect x="88" y="196" width="245" height="105" rx="22" fill={c.pillow} opacity=".96"/>
+      <rect x="94" y="202" width="233" height="93" rx="17" fill={c.fold} opacity=".4"/>
+      <rect x="467" y="196" width="245" height="105" rx="22" fill={c.pillow} opacity=".96"/>
+      <rect x="473" y="202" width="233" height="93" rx="17" fill={c.fold} opacity=".4"/>
+      <rect x="0" y="385" width="62" height="185" rx="4" fill={c.stand}/>
+      <rect x="738" y="385" width="62" height="185" rx="4" fill={c.stand}/>
+      <rect x="20" y="538" width="760" height="62" rx="6" fill={D?"#1A1610":"#E0D6C0"}/>
+    </svg>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════════════ */
+function App(){
+  const [dark,setDark]         = useState(false);
+  const [lang,setLang]         = useState("EN");
+  const [cart,setCart]         = useState([]);
+  const [cartOpen,setCartOpen] = useState(false);
+  const [scrolled,setScrolled] = useState(false);
+  const [activeCat,setActiveCat]= useState("all");
+  const [heroErr,setHeroErr]   = useState(false);
+  const [editErr,setEditErr]   = useState(false);
+
+  const t=T[lang], D=dark, count=cart.reduce((s,i)=>s+i.qty,0);
+
+  useEffect(()=>{
+    const fn=()=>setScrolled(window.scrollY>50);
+    window.addEventListener("scroll",fn);
+    return()=>window.removeEventListener("scroll",fn);
+  },[]);
+
+  const addToCart=useCallback(item=>{
+    setCart(p=>{
+      const ex=p.find(i=>i.id===item.id&&i.color===item.color&&i.size===item.size);
+      if(ex)return p.map(i=>i.cartId===ex.cartId?{...i,qty:i.qty+1}:i);
+      return[...p,item];
+    });
+    setCartOpen(true);
+  },[]);
+
+  const filtered = activeCat==="all" ? PRODUCTS
+    : PRODUCTS.filter(p=>p.cat===activeCat);
+
+  /* tokens */
+  const bg=D?"#0F0D0B":"#FAF8F3",col=D?"#F0EBE0":"#1E1A16";
+  const mut=D?"#7A7268":"#9A9088",bdr=D?"#2A2826":"#EBE4D8";
+  const surf=D?"#1A1714":"#FFFFFF",surf2=D?"#141210":"#F5F0E8";
+  const gold="#C8A87A",deep="#1E1A16";
+  const acBg=D?gold:deep,acTx=D?deep:"#FAF8F3";
+  const iBdr=D?"#2E2C28":"#E0D8C8",iBg=D?"#1E1C18":"#FFFFFF";
+  const navBg=scrolled?(D?"rgba(15,13,11,.94)":"rgba(250,248,243,.94)"):"transparent";
+
+  const cats=[
+    {key:"all",label:t.catAll},
+    {key:"bed",label:t.catBed},
+    {key:"mop",label:t.catMop},
+    {key:"baby",label:t.catBaby},
+  ];
+
+  return(
+    <div style={{minHeight:"100vh",background:bg,color:col,fontFamily:"'DM Sans',sans-serif",
+      transition:"background .5s,color .5s",overflowX:"hidden"}}>
+
+      {/* ── ANNOUNCEMENT BAR ── */}
+      <div style={{background:D?"#181412":deep,padding:"9px 0",overflow:"hidden"}}>
+        <div className="mq-wrap">
+          <div className="mq-inner">
+            {[0,1].map(k=>(
+              <span key={k}>
+                {[0,1,2,3,4].map((_,i)=>(
+                  <span key={i} style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",
+                    letterSpacing:".16em",textTransform:"uppercase",fontWeight:400,
+                    color:D?"rgba(200,168,122,.55)":"rgba(250,248,243,.6)",padding:"0 40px"}}>
+                    {t.announce}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── NAVBAR ── */}
+      <nav style={{position:"sticky",top:0,zIndex:30,background:navBg,
+        backdropFilter:scrolled?"blur(14px)":"none",
+        boxShadow:scrolled?`0 1px 30px rgba(0,0,0,.1)`:"none",
+        transition:"background .4s,box-shadow .4s"}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto",padding:"0 28px",
+          height:"62px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+
+          {/* Logo */}
+          <a href="#" style={{display:"flex",alignItems:"center",gap:"10px",
+            textDecoration:"none",color:col}}>
+            <div style={{width:"34px",height:"34px",borderRadius:"50%",background:acBg,
+              display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:700,
+                fontSize:"15px",color:acTx}}>S</span>
+            </div>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",
+              letterSpacing:".18em",fontWeight:400}}>SOLDA</span>
+          </a>
+
+          {/* Nav */}
+          <div className="hide-mob" style={{display:"flex",gap:"32px"}}>
+            {[t.navShop,t.navAbout,t.navContact].map(l=>(
+              <a key={l} href="#" className="nav-link" style={{color:mut,opacity:.7}}>{l}</a>
+            ))}
+          </div>
+
+          {/* Controls */}
+          <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+            <div className="lang-pill" style={{borderColor:bdr}}>
+              {["EN","FI"].map(l=>(
+                <button key={l} className="lang-opt" onClick={()=>setLang(l)}
+                  style={{background:lang===l?acBg:"transparent",
+                    color:lang===l?acTx:mut,border:"none"}}>{l}</button>
+              ))}
+            </div>
+            <button className="icon-btn" onClick={()=>setDark(d=>!d)}
+              style={{borderColor:iBdr,background:iBg,color:D?gold:mut}}>
+              {D?<I.Sun/>:<I.Moon/>}
+            </button>
+            <button className="icon-btn" onClick={()=>setCartOpen(true)}
+              style={{borderColor:iBdr,background:iBg,color:col,position:"relative"}}>
+              <I.Cart s={17}/>
+              {count>0&&(
+                <span style={{position:"absolute",top:"-7px",right:"-7px",
+                  width:"20px",height:"20px",borderRadius:"50%",background:acBg,
+                  color:acTx,fontSize:"10px",fontWeight:700,display:"flex",
+                  alignItems:"center",justifyContent:"center",fontFamily:"'Jost',sans-serif"}}>
+                  {count}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <section style={{position:"relative",height:"100vh",minHeight:"580px",
+        display:"flex",alignItems:"center",overflow:"hidden"}}>
+        <div style={{position:"absolute",inset:0,zIndex:0}}>
+          {!heroErr?(
+            <img
+              src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1600&q=90&auto=format&fit=crop"
+              alt="Luxury nordic bedroom"
+              onError={()=>setHeroErr(true)}
+              style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}}
+            />
+          ):( <HeroFallback dark={dark}/> )}
+        </div>
+        <div style={{position:"absolute",inset:0,zIndex:1,
+          background:D
+            ?"linear-gradient(108deg,rgba(10,8,6,.97) 0%,rgba(10,8,6,.76) 48%,rgba(10,8,6,.18) 80%,transparent)"
+            :"linear-gradient(108deg,rgba(250,248,243,.97) 0%,rgba(250,248,243,.80) 48%,rgba(250,248,243,.28) 80%,transparent)"
+        }}/>
+        {/* Decorative vertical line */}
+        <div style={{position:"absolute",left:"9%",top:"18%",bottom:"18%",
+          width:"1px",background:D?"rgba(200,168,122,.18)":"rgba(30,26,22,.1)",zIndex:2}}/>
+
+        <div style={{position:"relative",zIndex:3,maxWidth:"1340px",
+          margin:"0 auto",padding:"0 32px",width:"100%"}}>
+          <div style={{maxWidth:"600px"}}>
+            <div className="ih au d1" style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"26px"}}>
+              <div style={{width:"28px",height:"1px",background:D?gold:"rgba(30,26,22,.35)"}}/>
+              <span style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+                textTransform:"uppercase",color:D?gold:mut}}>{t.heroEyebrow}</span>
+            </div>
+            <h1 className="ih au d2 hero-title"
+              style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"80px",
+                fontWeight:300,lineHeight:.93,marginBottom:"28px",
+                whiteSpace:"pre-line",letterSpacing:"-.01em"}}>
+              {t.heroTitle}
+            </h1>
+            <p className="ih au d3"
+              style={{fontSize:"15px",lineHeight:1.85,fontWeight:300,
+                color:mut,marginBottom:"38px",maxWidth:"420px"}}>
+              {t.heroSub}
+            </p>
+            <div className="ih au d4" style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
+              <a href="#shop" className="btn-main" style={{background:acBg,color:acTx}}>
+                {t.heroBtn} <I.Arr s={13}/>
+              </a>
+              <a href="#" className="btn-outline"
+                style={{border:`1px solid ${D?"rgba(200,168,122,.38)":"rgba(30,26,22,.22)"}`,color:col}}>
+                {t.heroBtn2} <I.Arr s={13}/>
+              </a>
+            </div>
+
+            {/* Category quick-links */}
+            <div className="ih au d5" style={{display:"flex",gap:"8px",marginTop:"32px",flexWrap:"wrap"}}>
+              {[
+                {k:"bed",label:lang==="EN"?"Bedding":"Vuodevaatteet",col:D?"rgba(200,168,122,.15)":"rgba(200,168,122,.15)",txt:D?"#C8A87A":"#8A6A3A"},
+                {k:"mop",label:lang==="EN"?"Mop Cloths":"Moppikankaat",col:D?"rgba(100,160,200,.15)":"rgba(80,140,190,.12)",txt:D?"#78B4D8":"#3A6A8A"},
+                {k:"baby",label:lang==="EN"?"Baby":"Vauva",col:D?"rgba(200,140,200,.15)":"rgba(180,100,180,.12)",txt:D?"#D898D8":"#8A3A8A"},
+              ].map(c=>(
+                <a key={c.k} href="#shop" onClick={()=>setActiveCat(c.k)}
+                  style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"5px 14px",
+                    borderRadius:"999px",fontSize:"10px",fontWeight:500,letterSpacing:".12em",
+                    textTransform:"uppercase",textDecoration:"none",
+                    background:c.col,color:c.txt,fontFamily:"'Jost',sans-serif",
+                    border:`1px solid ${c.col}`,transition:"all .2s"}}
+                  onMouseOver={e=>e.currentTarget.style.opacity=".75"}
+                  onMouseOut={e=>e.currentTarget.style.opacity="1"}>
+                  {c.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Floating card */}
+        <div className="ih af d10 float-card hide-mob"
+          style={{position:"absolute",right:"5.5%",bottom:"13%",zIndex:3,
+            width:"170px",borderRadius:"18px",padding:"11px",
+            background:D?"rgba(26,23,20,.9)":"rgba(255,255,255,.9)",
+            border:`1px solid ${bdr}`,backdropFilter:"blur(10px)",
+            boxShadow:D?"0 8px 40px rgba(0,0,0,.5)":"0 8px 40px rgba(0,0,0,.12)"}}>
+          <div style={{borderRadius:"11px",overflow:"hidden",marginBottom:"9px",
+            aspectRatio:"1/1",background:D?"#2A2620":"#F0EBE0"}}>
+            <img src={PRODUCTS[8].img} alt="product"
+              style={{width:"100%",height:"100%",objectFit:"cover"}}
+              onError={e=>{e.target.style.display="none"}}/>
+          </div>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"13px",
+            lineHeight:1.2,marginBottom:"4px",fontWeight:500}}>
+            {lang==="EN"?PRODUCTS[8].nameEN:PRODUCTS[8].nameFI}
+          </p>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"16px",
+              fontWeight:600}}>{t.cur}{PRODUCTS[8].price}</span>
+            <Stars n={5} size={10}/>
+          </div>
+        </div>
+
+        {/* Eco badge */}
+        <div className="ih af d10 hide-mob"
+          style={{position:"absolute",right:"5.5%",top:"30%",zIndex:3,
+            padding:"8px 16px",borderRadius:"999px",
+            background:D?"rgba(26,23,20,.84)":"rgba(255,255,255,.84)",
+            border:`1px solid ${bdr}`,backdropFilter:"blur(8px)",
+            display:"flex",alignItems:"center",gap:"8px",
+            boxShadow:D?"0 4px 20px rgba(0,0,0,.4)":"0 4px 20px rgba(0,0,0,.08)"}}>
+          <I.Recycle s={14}/>
+          <span style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".1em"}}>
+            500+ washes guaranteed
+          </span>
+        </div>
+      </section>
+
+      {/* ── TRUST STRIP ── */}
+      <section style={{padding:"58px 0",borderBottom:`1px solid ${bdr}`}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto",padding:"0 32px"}}>
+          <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+            textTransform:"uppercase",textAlign:"center",color:mut,marginBottom:"36px"}}>
+            {t.trustTitle}
+          </p>
+          <div className="trust-grid" style={{display:"grid",
+            gridTemplateColumns:"repeat(4,1fr)",gap:"28px"}}>
+            {[
+              {icon:<I.Shield/>,title:t.t1t,desc:t.t1d},
+              {icon:<I.Truck/>,title:t.t2t,desc:t.t2d},
+              {icon:<I.Recycle/>,title:t.t3t,desc:t.t3d},
+              {icon:<I.Leaf/>,title:t.t4t,desc:t.t4d},
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",gap:"13px",alignItems:"flex-start"}}>
+                <div style={{width:"42px",height:"42px",borderRadius:"12px",flexShrink:0,
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                  background:D?"#1E1C18":surf2,color:D?gold:"#6A5A48"}}>
+                  {item.icon}
+                </div>
+                <div>
+                  <h4 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"16px",
+                    fontWeight:500,marginBottom:"4px"}}>{item.title}</h4>
+                  <p style={{fontSize:"11px",lineHeight:1.7,color:mut}}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS ── */}
+      <section style={{padding:"60px 0",background:D?"#141210":deep}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto",padding:"0 32px"}}>
+          <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+            textTransform:"uppercase",textAlign:"center",
+            color:D?"rgba(200,168,122,.5)":"rgba(250,248,243,.38)",marginBottom:"40px"}}>
+            {t.statsLabel}
+          </p>
+          <div className="stats-grid" style={{display:"grid",
+            gridTemplateColumns:"repeat(4,1fr)",gap:"24px",textAlign:"center"}}>
+            {[{n:t.s1n,l:t.s1l},{n:t.s2n,l:t.s2l},{n:t.s3n,l:t.s3l},{n:t.s4n,l:t.s4l}].map((s,i)=>(
+              <div key={i}>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"52px",
+                  fontWeight:300,lineHeight:1,color:D?gold:"#FAF8F3",marginBottom:"8px"}}>
+                  {s.n}
+                </div>
+                <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".18em",
+                  textTransform:"uppercase",color:D?"rgba(200,168,122,.45)":"rgba(250,248,243,.4)"}}>
+                  {s.l}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCTS ── */}
+      <section id="shop" style={{padding:"84px 0"}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto",padding:"0 32px"}}>
+
+          {/* Header */}
+          <div style={{display:"flex",flexWrap:"wrap",alignItems:"flex-end",
+            justifyContent:"space-between",gap:"20px",marginBottom:"36px"}}>
+            <div>
+              <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+                textTransform:"uppercase",color:mut,marginBottom:"13px"}}>{t.secLabel}</p>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"46px",
+                fontWeight:300,lineHeight:.98,whiteSpace:"pre-line"}}>{t.secTitle}</h2>
+            </div>
+            <p style={{maxWidth:"270px",fontSize:"13px",lineHeight:1.8,color:mut,
+              fontFamily:"'DM Sans',sans-serif"}}>{t.secSub}</p>
+          </div>
+
+          {/* Category Filter Tabs */}
+          <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"40px",
+            padding:"16px 20px",borderRadius:"16px",
+            background:D?"#1A1714":"#F5F0E8",border:`1px solid ${bdr}`}}>
+            {cats.map(c=>(
+              <button key={c.key} className="cat-tab"
+                onClick={()=>setActiveCat(c.key)}
+                style={{
+                  background:activeCat===c.key?acBg:"transparent",
+                  borderColor:activeCat===c.key?acBg:bdr,
+                  color:activeCat===c.key?acTx:mut,
+                }}>
+                {c.label}
+                <span style={{marginLeft:"6px",fontSize:"9px",opacity:.6,
+                  fontFamily:"'Jost',sans-serif"}}>
+                  ({c.key==="all"?PRODUCTS.length:PRODUCTS.filter(p=>p.cat===c.key).length})
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Product Grid */}
+          <div className="prod-grid" style={{display:"grid",
+            gridTemplateColumns:"repeat(auto-fill,minmax(270px,1fr))",gap:"22px"}}>
+            {filtered.map(p=>(
+              <ProductCard key={p.id} product={p} t={t} lang={lang}
+                dark={dark} onAdd={addToCart}/>
+            ))}
+          </div>
+
+          {filtered.length===0&&(
+            <div style={{textAlign:"center",padding:"60px 0",color:mut,
+              fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",fontStyle:"italic"}}>
+              {lang==="EN"?"No products in this category yet.":"Ei tuotteita tässä kategoriassa vielä."}
+            </div>
+          )}
+
+          <div style={{textAlign:"center",marginTop:"44px"}}>
+            <a href="#" className="btn-outline" style={{border:`1px solid ${bdr}`,color:col}}>
+              {lang==="EN"?"View All Products":"Näytä Kaikki Tuotteet"} <I.Arr s={13}/>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EDITORIAL ── */}
+      <section style={{borderTop:`1px solid ${bdr}`,borderBottom:`1px solid ${bdr}`}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto"}}>
+          <div className="editorial-grid"
+            style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
+            <div style={{position:"relative",aspectRatio:"4/5",overflow:"hidden",
+              background:D?"#1A1714":"#F0EBE0"}}>
+              {!editErr?(
+                <img
+                  src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=90&auto=format&fit=crop"
+                  alt="Nordic bedroom"
+                  onError={()=>setEditErr(true)}
+                  style={{width:"100%",height:"100%",objectFit:"cover",display:"block",
+                    transition:"transform .7s ease"}}
+                  onMouseOver={e=>e.target.style.transform="scale(1.04)"}
+                  onMouseOut={e=>e.target.style.transform="scale(1)"}
+                />
+              ):(
+                <HeroFallback dark={dark}/>
+              )}
+              <div style={{position:"absolute",bottom:"28px",left:"28px",
+                padding:"12px 20px",borderRadius:"14px",
+                background:D?"rgba(20,18,16,.82)":"rgba(255,255,255,.82)",
+                backdropFilter:"blur(8px)",border:`1px solid ${bdr}`}}>
+                <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"13px",
+                  fontStyle:"italic",opacity:.7,marginBottom:"4px"}}>
+                  500+ wash tested
+                </p>
+                <div style={{display:"flex",gap:"4px",alignItems:"center"}}>
+                  <Stars n={5} size={11}/>
+                  <span style={{fontSize:"10px",color:mut,fontFamily:"'Jost',sans-serif",
+                    marginLeft:"4px",letterSpacing:".03em"}}>4.9 · 1.4k reviews</span>
+                </div>
+              </div>
+            </div>
+            <div style={{padding:"64px 56px",background:D?"#141210":"#F5F0E6",
+              display:"flex",flexDirection:"column",justifyContent:"center"}}>
+              <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+                textTransform:"uppercase",color:D?gold:mut,marginBottom:"20px"}}>{t.editLabel}</p>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"40px",
+                fontWeight:300,lineHeight:1.05,marginBottom:"22px",whiteSpace:"pre-line"}}>
+                {t.editTitle}
+              </h2>
+              <p style={{fontSize:"14px",lineHeight:1.9,color:mut,marginBottom:"28px"}}>
+                {t.editBody}
+              </p>
+              {[
+                lang==="EN"?"OEKO-TEX 100 certified across all products":"OEKO-TEX 100 sertifioitu kaikissa tuotteissa",
+                lang==="EN"?"Machine washable at 60°C, 500+ cycles":"Konepestävä 60°C:ssa, 500+ kierrosta",
+                lang==="EN"?"Replaces hundreds of disposable items":"Korvaa satoja kertakäyttöisiä tuotteita",
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"10px"}}>
+                  <div style={{width:"20px",height:"20px",borderRadius:"50%",flexShrink:0,
+                    background:D?"rgba(200,168,122,.12)":"rgba(30,26,22,.06)",
+                    display:"flex",alignItems:"center",justifyContent:"center",
+                    color:D?gold:"#5A4A38"}}>
+                    <I.Check s={10}/>
+                  </div>
+                  <span style={{fontSize:"12px",color:mut}}>{item}</span>
+                </div>
+              ))}
+              <a href="#" className="btn-main"
+                style={{background:acBg,color:acTx,marginTop:"30px",
+                  display:"inline-flex",width:"fit-content"}}>
+                {t.editLink} <I.Arr s={13}/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── REVIEWS ── */}
+      <section style={{padding:"84px 0",background:D?"#0F0D0B":surf2}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto",padding:"0 32px"}}>
+          <div style={{textAlign:"center",marginBottom:"50px"}}>
+            <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+              textTransform:"uppercase",color:mut,marginBottom:"13px"}}>{t.reviewsLabel}</p>
+            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px",fontWeight:300}}>
+              {t.reviewsTitle}
+            </h2>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:"20px"}}>
+            {REVIEWS.map((r,i)=>(
+              <div key={i} className="tcard"
+                style={{background:surf,borderRadius:"20px",padding:"28px",position:"relative",
+                  overflow:"hidden",
+                  boxShadow:D?"0 2px 20px rgba(0,0,0,.3)":"0 2px 20px rgba(0,0,0,.06)"}}>
+                <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"88px",fontWeight:300,
+                  lineHeight:.7,color:D?"rgba(200,168,122,.08)":"rgba(30,26,22,.05)",
+                  position:"absolute",top:"10px",right:"16px",userSelect:"none",
+                  pointerEvents:"none"}}>"</div>
+                {/* Category tag */}
+                <span style={{display:"inline-block",padding:"3px 10px",borderRadius:"999px",
+                  fontSize:"9px",fontWeight:500,letterSpacing:".12em",textTransform:"uppercase",
+                  fontFamily:"'Jost',sans-serif",marginBottom:"12px",
+                  background:D?"rgba(200,168,122,.1)":"rgba(200,168,122,.1)",color:D?gold:"#8A6A3A"}}>
+                  {r.cat}
+                </span>
+                <div style={{marginBottom:"12px"}}><Stars n={r.rating} size={13}/></div>
+                <p style={{fontSize:"14px",lineHeight:1.85,marginBottom:"20px",
+                  fontFamily:"'DM Sans',sans-serif",position:"relative",zIndex:1}}>
+                  "{r.text}"
+                </p>
+                <div style={{display:"flex",alignItems:"center",gap:"12px",
+                  borderTop:`1px solid ${bdr}`,paddingTop:"16px"}}>
+                  <img src={r.img} alt={r.name}
+                    style={{width:"40px",height:"40px",borderRadius:"50%",objectFit:"cover",flexShrink:0}}
+                    onError={e=>{e.target.style.background="#C8A87A";e.target.style.display="none"}}/>
+                  <div>
+                    <p style={{fontSize:"13px",fontWeight:500,marginBottom:"1px"}}>{r.name}</p>
+                    <p style={{fontSize:"11px",color:mut,fontFamily:"'Jost',sans-serif"}}>{r.loc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── NEWSLETTER ── */}
+      <section style={{padding:"84px 32px",background:D?"#141210":deep,
+        position:"relative",overflow:"hidden"}}>
+        {[360,220].map((r,i)=>(
+          <div key={i} style={{position:"absolute",right:`${-r/2+i*60}px`,top:`${-r/2}px`,
+            width:`${r}px`,height:`${r}px`,borderRadius:"50%",
+            border:`1px solid ${D?"rgba(200,168,122,.06)":"rgba(250,248,243,.05)"}`,
+            pointerEvents:"none"}}/>
+        ))}
+        <div style={{maxWidth:"520px",margin:"0 auto",textAlign:"center",position:"relative",zIndex:1}}>
+          <p style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".3em",
+            textTransform:"uppercase",
+            color:D?"rgba(200,168,122,.55)":"rgba(250,248,243,.38)",marginBottom:"13px"}}>
+            {t.newsletter_label}
+          </p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px",fontWeight:300,
+            color:D?gold:"#FAF8F3",marginBottom:"13px"}}>{t.newsletter_title}</h2>
+          <p style={{fontSize:"14px",lineHeight:1.75,
+            color:D?"rgba(200,168,122,.45)":"rgba(250,248,243,.42)",
+            marginBottom:"32px"}}>{t.newsletter_sub}</p>
+          <div style={{display:"flex",gap:"10px",flexWrap:"wrap",justifyContent:"center"}}>
+            <input type="email" placeholder={t.newsletter_ph}
+              style={{flex:1,minWidth:"200px",padding:"13px 22px",borderRadius:"999px",
+                border:`1px solid ${D?"rgba(200,168,122,.18)":"rgba(250,248,243,.14)"}`,
+                background:D?"rgba(255,255,255,.05)":"rgba(255,255,255,.07)",
+                color:D?"#F0EBE0":"#FAF8F3",fontSize:"13px"}}/>
+            <button style={{padding:"13px 26px",borderRadius:"999px",border:"none",
+              background:gold,color:deep,fontFamily:"'Jost',sans-serif",fontSize:"10px",
+              fontWeight:500,letterSpacing:".22em",textTransform:"uppercase",
+              cursor:"pointer",whiteSpace:"nowrap"}}
+              onMouseOver={e=>e.currentTarget.style.opacity=.85}
+              onMouseOut={e=>e.currentTarget.style.opacity=1}>
+              {t.newsletter_btn}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer style={{borderTop:`1px solid ${bdr}`,padding:"60px 32px 0"}}>
+        <div style={{maxWidth:"1340px",margin:"0 auto"}}>
+          <div className="footer-grid"
+            style={{display:"grid",gridTemplateColumns:"2.2fr 1fr 1fr 1fr",
+              gap:"44px",marginBottom:"48px"}}>
+            <div>
+              <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"14px"}}>
+                <div style={{width:"32px",height:"32px",borderRadius:"50%",background:acBg,
+                  display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:700,
+                    fontSize:"14px",color:acTx}}>S</span>
+                </div>
+                <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"20px",
+                  letterSpacing:".18em",fontWeight:400}}>SOLDA</span>
+              </div>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"23px",
+                fontStyle:"italic",fontWeight:300,color:mut,marginBottom:"13px"}}>
+                {t.footerTag}
+              </p>
+              <p style={{fontSize:"12px",lineHeight:1.8,color:mut,maxWidth:"210px"}}>
+                {lang==="EN"
+                  ?"Reusable home & baby essentials for the Nordic household."
+                  :"Uudelleenkäytettävät koti- ja vauvatuotteet pohjoismaiseen kotiin."}
+              </p>
+              <div style={{display:"flex",gap:"16px",marginTop:"18px"}}>
+                {["Instagram","Pinterest","TikTok"].map(s=>(
+                  <a key={s} href="#" style={{fontSize:"10px",letterSpacing:".1em",
+                    color:mut,textDecoration:"none",opacity:.5,transition:"opacity .2s",
+                    fontFamily:"'Jost',sans-serif",textTransform:"uppercase"}}
+                    onMouseOver={e=>e.currentTarget.style.opacity=1}
+                    onMouseOut={e=>e.currentTarget.style.opacity=.5}>{s}</a>
+                ))}
+              </div>
+            </div>
+            {[[t.f1,t.fl1],[t.f2,t.fl2],[t.f3,t.fl3]].map(([title,links])=>(
+              <div key={title}>
+                <h4 style={{fontFamily:"'Jost',sans-serif",fontSize:"10px",letterSpacing:".2em",
+                  textTransform:"uppercase",fontWeight:500,color:mut,marginBottom:"16px"}}>
+                  {title}
+                </h4>
+                <ul style={{listStyle:"none",display:"flex",flexDirection:"column",gap:"10px"}}>
+                  {links.map(l=>(
+                    <li key={l}>
+                      <a href="#" style={{fontSize:"12px",color:col,textDecoration:"none",
+                        opacity:.5,transition:"opacity .2s"}}
+                        onMouseOver={e=>e.currentTarget.style.opacity=1}
+                        onMouseOut={e=>e.currentTarget.style.opacity=.5}>{l}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom strip */}
+          <div style={{borderTop:`1px solid ${bdr}`,padding:"20px 0",
+            display:"flex",flexWrap:"wrap",alignItems:"center",
+            justifyContent:"space-between",gap:"12px"}}>
+            <p style={{fontSize:"11px",color:mut,fontFamily:"'Jost',sans-serif"}}>
+              {t.footerCopy}
+            </p>
+            <div style={{display:"flex",gap:"20px",flexWrap:"wrap"}}>
+              {["Privacy Policy","Terms","Cookies"].map(l=>(
+                <a key={l} href="#" style={{fontSize:"11px",color:mut,textDecoration:"none",
+                  opacity:.5,transition:"opacity .2s",fontFamily:"'Jost',sans-serif"}}
+                  onMouseOver={e=>e.currentTarget.style.opacity=1}
+                  onMouseOut={e=>e.currentTarget.style.opacity=.5}>{l}</a>
+              ))}
+            </div>
+          </div>
+
+          {/* VTEK Credit */}
+          <div style={{borderTop:`1px solid ${D?"rgba(255,255,255,.03)":"rgba(0,0,0,.04)"}`,
+            padding:"15px 0 24px",display:"flex",alignItems:"center",
+            justifyContent:"center",gap:"6px"}}>
+            <span style={{fontSize:"11px",color:mut,opacity:.5,
+              fontFamily:"'Jost',sans-serif",letterSpacing:".04em"}}>
+              {t.footerCredit}
+            </span>
+            <a href="https://vtekbizcorp.online/#contact"
+              target="_blank" rel="noopener noreferrer"
+              style={{fontSize:"11px",fontFamily:"'Jost',sans-serif",letterSpacing:".04em",
+                fontWeight:500,textDecoration:"none",
+                color:D?gold:"#8A6A4A",
+                borderBottom:`1px solid ${D?"rgba(200,168,122,.25)":"rgba(138,106,74,.25)"}`,
+                paddingBottom:"1px",transition:"all .2s"}}
+              onMouseOver={e=>{e.currentTarget.style.opacity=".78";e.currentTarget.style.borderBottomColor=D?gold:"#8A6A4A"}}
+              onMouseOut={e=>{e.currentTarget.style.opacity="1";e.currentTarget.style.borderBottomColor=D?"rgba(200,168,122,.25)":"rgba(138,106,74,.25)"}}>
+              VTEK Bizcorp &amp; Media Labs
+            </a>
+          </div>
+        </div>
+      </footer>
+
+      <CartDrawer open={cartOpen} onClose={()=>setCartOpen(false)}
+        cart={cart} setCart={setCart} t={t} dark={dark}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
